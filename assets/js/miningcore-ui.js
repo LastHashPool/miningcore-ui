@@ -1,8 +1,10 @@
 // config
-var API = 'http://67.207.73.148:4000/api/'; // API address
+var API = 'http://pool.home:4000/api/'; // API address
 var defaultPool = 'rvn'; // Default Pool ID
 
-var currentPool = defaultPool;
+var storedPool = localStorage.getItem('pool');
+var currentPool = storedPool || defaultPool;
+//$('head link[rel=icon]').attr('href', 'assets/img/coins/' + currentPool + '.png');
 
 // private function
 function _formatter(value, decimal, unit) {
@@ -30,33 +32,27 @@ function _formatter(value, decimal, unit) {
 }
 
 function loadPools(renderCallback) {
-    $('#currentPool b').remove();
-    $('#currentPool ul').remove();
+    $('#poolList').html('');
     return $.ajax(API + 'pools')
         .done(function (data) {
-            var poolList = '<ul class="dropdown-menu">';
-            if (data.pools.length > 1) {
-                $('#currentPool').attr('data-toggle', 'dropdown');
-                $('#currentPool').append('<b class="caret"></b>');
-            }
+            var poolList = '';
             $.each(data.pools, function (index, value) {
                 if (currentPool.length === 0 && index === 0) {
                     currentPool = value.id;
                 }
-                if (currentPool === value.id) {
-                    $('#currentPool p').attr('data-id', value.id);
-                    $('#currentPool p').text(value.coin.type);
-                } else {
-                    poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '">' + value.coin.type + '</a></li>';
+                poolList += '<li';
+                if(currentPool == value.id) {
+                    poolList += ' style="background: wheat;"';
                 }
+                poolList += '><a href="javascript:void(0)" data-id="' + value.id + '">' + value.coin.type + '</a></li>';
             });
-            poolList += '</ul>';
             if (poolList.length > 0) {
                 $('#poolList').append(poolList);
             }
             if (data.pools.length > 1) {
                 $('#poolList li a').on('click', function (event) {
                     currentPool = $(event.target).attr('data-id');
+                    localStorage.setItem('pool', currentPool);
                     loadPools(renderCallback);
                 });
             }
@@ -192,6 +188,11 @@ function loadDashboardData(walletAddress) {
         .done(function (data) {
             $('#pendingShares').text(_formatter(data.pendingShares, 0, ''));
             var workerHashRate = 0;
+            if(!data.performance) {
+                data.performance = {
+                    workers: []
+                };
+            }
             $.each(data.performance.workers, function (index, value) {
                 workerHashRate += value.hashrate;
             });
@@ -300,7 +301,7 @@ function loadMinersList() {
             if (data.length > 0) {
                 $.each(data, function (index, value) {
                     minerList += '<tr>';
-                    minerList += '<td>' + value.miner.substring(0, 12) + ' &hellip; ' + value.miner.substring(value.miner.length - 12) + '</td>';
+                    minerList += '<td>' + value.miner + '</td>';
                     //minerList += '<td><a href="' + value.minerAddressInfoLink + '" target="_blank">' + value.miner.substring(0, 12) + ' &hellip; ' + value.miner.substring(value.miner.length - 12) + '</td>';
                     minerList += '<td>' + _formatter(value.hashrate, 5, 'H/s') + '</td>';
                     minerList += '<td>' + _formatter(value.sharesPerSecond, 5, 'S/s') + '</td>';
@@ -326,11 +327,11 @@ function loadMinersList() {
 function loadBlocksList() {
     return $.ajax(API + 'pools/' + currentPool + '/blocks?pageSize=100')
         .done(function (data) {
-            var blockList = '<thead><tr><th rowspan="2">Date &amp; Time</th><th>Height</th><th>Effort</th><th>Status</th><th>Reward</th></tr><tr><th style="display: none"></th><th colspan="4">Confirmation</th></tr></thead><tbody>';
+            var blockList = '<thead><tr><th>Date &amp; Time</th><th>Height</th><th>Effort</th><th>Status</th><th>Reward</th><th colspan="2">Confirmation</th></tr></thead><tbody>';
             if (data.length > 0) {
                 $.each(data, function (index, value) {
                     blockList += '<tr>';
-                    blockList += '<td rowspan="2">' + new Date(value.created).toLocaleString() + '</td>';
+                    blockList += '<td>' + new Date(value.created).toLocaleString() + '</td>';
                     blockList += '<td>' + value.blockHeight + '</td>';
                     if (typeof(value.effort) !== "undefined") {
                         blockList += '<td>~' + Math.round(value.effort * 100) + '%</td>';
@@ -339,7 +340,6 @@ function loadBlocksList() {
                     }
                     blockList += '<td>' + value.status + '</td>';
                     blockList += '<td>' + _formatter(value.reward, 5, '') + '</td>';
-                    blockList += '</tr><tr><td style="display: none"></td>';
                     blockList += '<td>~' + Math.round(value.confirmationProgress * 100) + '%</td>';
                     blockList += '<td colspan="3"><a href="' + value.infoLink + '" target="_blank">' + value.transactionConfirmationData.substring(0, 16) + ' &hellip; ' + value.transactionConfirmationData.substring(value.transactionConfirmationData.length - 16) + ' </a></td>';
                     blockList += '</tr>'
@@ -364,19 +364,18 @@ function loadBlocksList() {
 function loadPaymentsList() {
     return $.ajax(API + 'pools/' + currentPool + '/payments?pageSize=500')
         .done(function (data) {
-            var paymentList = '<thead><tr><th rowspan="2">Date &amp; Time</th><th>Address</th><th>Amount</th></tr><tr><th style="display: none"></th><th colspan="2">Confirmation</th></tr></thead><tbody>';
+            var paymentList = '<thead><tr><th>Date &amp; Time</th><th>Address</th><th>Amount</th><th colspan="2">Confirmation</th>>/tr></thead><tbody>';
             if (data.length > 0) {
                 $.each(data, function (index, value) {
                     paymentList += '<tr>';
-                    paymentList += '<td rowspan="2">' + new Date(value.created).toLocaleString() + '</td>';
+                    paymentList += '<td>' + new Date(value.created).toLocaleString() + '</td>';
                     paymentList += '<td><a href="' + value.addressInfoLink + '" target="_blank">' + value.address.substring(0, 12) + ' &hellip; ' + value.address.substring(value.address.length - 12) + '</td>';
                     paymentList += '<td>' + _formatter(value.amount, 5, '') + '</td>';
-                    paymentList += '</tr><tr><td style="display: none"></td>';
                     paymentList += '<td colspan="2"><a href="' + value.transactionInfoLink + '" target="_blank">' + value.transactionConfirmationData.substring(0, 16) + ' &hellip; ' + value.transactionConfirmationData.substring(value.transactionConfirmationData.length - 16) + ' </a></td>';
                     paymentList += '</tr>';
                 });
             } else {
-                paymentList += '<tr><td colspan="3">None</td></tr>';
+                paymentList += '<tr><td colspan="5">None</td></tr>';
             }
             paymentList += '</tbody>';
             $('#paymentList').html(paymentList);
@@ -395,11 +394,11 @@ function loadPaymentsList() {
 function loadConnectConfig() {
     return $.ajax(API + 'pools')
         .done(function (data) {
-            var connectPoolConfig = '<thead><tr><th>Item</th><th>Value</th></tr></thead><tbody>';
+            var connectPoolConfig = '<tbody><tr><td>Url</td><td>stratum+tcp://evocation.network</td></tr>';
             $.each(data.pools, function (index, value) {
                 if (currentPool === value.id) {
                     connectPoolConfig += '<tr><td>Algorithm</td><td>' + value.coin.algorithm + '</td></tr>';
-                    connectPoolConfig += '<tr><td>Wallet Address</td><td><a href="' + value.addressInfoLink + '" target="_blank">' + value.address.substring(0, 12) + ' &hellip; ' + value.address.substring(value.address.length - 12) + '</a></td></tr>';
+                    connectPoolConfig += '<tr><td>Wallet Address</td><td><a href="' + value.addressInfoLink + '" target="_blank">' + value.address + '</a></td></tr>';
                     connectPoolConfig += '<tr><td>Payout Scheme</td><td>' + value.paymentProcessing.payoutScheme + '</td></tr>';
                     connectPoolConfig += '<tr><td>Minimum Payment w/o #</td><td>' + value.paymentProcessing.minimumPayment + '</td></tr>';
                     if (typeof(value.paymentProcessing.minimumPaymentToPaymentId) !== "undefined") {
