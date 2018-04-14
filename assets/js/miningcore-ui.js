@@ -1,6 +1,6 @@
 // config
-var API = 'http://localhost:4000/api/'; // API address
-var defaultPool = ''; // Default Pool ID
+var API = 'http://67.207.73.148:4000/api/'; // API address
+var defaultPool = 'rvn'; // Default Pool ID
 
 var currentPool = defaultPool;
 
@@ -199,24 +199,10 @@ function loadDashboardData(walletAddress) {
             $('#pendingBalance').text(_formatter(data.pendingBalance, 5, ''));
             $('#paidBalance').text(_formatter(data.totalPaid, 5, ''));
             $('#lifetimeBalance').text(_formatter(data.pendingBalance + data.totalPaid, 5, ''));
-        })
-        .fail(function () {
-            $.notify({
-                icon: "ti-cloud-down",
-                message: "Error: No response from API.<br>(loadDashboardData)",
-            }, {
-                type: 'danger',
-                timer: 3000,
-            });
-        });
-}
 
-function loadDashboardWorkerList(walletAddress) {
-    return $.ajax(API + 'pools/' + currentPool + '/miners/' + walletAddress + '/performance')
-        .done(function (data) {
             var workerList = '<thead><th>Name</th><th>Hash Rate</th><th>Share Rate</th></thead><tbody>';
-            if (data.length > 0) {
-                $.each(data[0].workers, function (index, value) {
+            if (Object.keys(data.performance.workers).length > 0) {
+                $.each(data.performance.workers, function (index, value) {
                     workerList += '<tr>';
                     if (index.length === 0) {
                         workerList += '<td>Unnamed</td>';
@@ -236,7 +222,7 @@ function loadDashboardWorkerList(walletAddress) {
         .fail(function () {
             $.notify({
                 icon: "ti-cloud-down",
-                message: "Error: No response from API.<br>(loadDashboardWorkerList)",
+                message: "Error: No response from API.<br>(loadDashboardData)",
             }, {
                 type: 'danger',
                 timer: 3000,
