@@ -1,5 +1,5 @@
 // config
-var API = 'http://pool.home:4000/api/'; // API address
+var API = 'http://evocation.network:4000/api/'; // API address
 var defaultPool = 'rvn'; // Default Pool ID
 
 var storedPool = localStorage.getItem('pool');
