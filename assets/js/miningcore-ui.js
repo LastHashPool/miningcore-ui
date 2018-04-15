@@ -288,9 +288,9 @@ function loadDashboardData(walletAddress) {
                         workerList += '<td>' + index + '</td>';
                     }
                     workerList += '<td>' + _formatter(value.hashrate, 5, 'H/s') + '</td>';
-                    workerList += '<td>' + _formatter(avgWorkersHashRate[index] / data.performanceSamples.length, 5, 'H/s') + '</td>';
-                    workerList += '<td>' + _formatter(avgWorkersShares[index] / data.performanceSamples.length, 5, 'S/s') + '</td>';
+                    workerList += '<td>' + _formatter((avgWorkersHashRate[index] / data.performanceSamples.length) || 0, 5, 'H/s') + '</td>';
                     workerList += '<td>' + _formatter(value.sharesPerSecond, 5, 'S/s') + '</td>';
+                    workerList += '<td>' + _formatter((avgWorkersShares[index] / data.performanceSamples.length) || 0, 5, 'S/s') + '</td>';
                     workerList += '</tr>';
                 });
             } else {
