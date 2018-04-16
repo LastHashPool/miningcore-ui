@@ -43,7 +43,7 @@ function _dateFormatter(date, format = true) {
 
 function loadPools(renderCallback) {
     $('#currentPool b').remove();
-    $('#currentPool ul').remove();
+    $('#poolList ul').remove();
     return $.ajax(API + 'pools')
         .done(function (data) {
             var poolList = '<ul class="dropdown-menu">';
@@ -56,10 +56,11 @@ function loadPools(renderCallback) {
                     currentPool = value.id;
                 }
                 if (currentPool === value.id) {
-                    $('#currentPool p').attr('data-id', value.id);
-                    $('#currentPool p').text(value.coin.type);
+                    $('#currentPool').attr('data-id', value.id);
+                    $('#currentPool span').text(value.coin.type);
+                    $('#currentPool img').attr('src', 'assets/img/coins/' + value.coin.type + '.png');
                 } else {
-                    poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '">' + value.coin.type + '</a></li>';
+                    poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '"><img src="assets/img/coins/' + value.coin.type + '.png" style="margin-top: -4px; height: 20px;">&nbsp;<span class="big">' + value.coin.type + '</span></a></li>';
                 }
             });
             poolList += '</ul>';
@@ -68,7 +69,7 @@ function loadPools(renderCallback) {
             }
             if (data.pools.length > 1) {
                 $('#poolList li a').on('click', function (event) {
-                    currentPool = $(event.target).attr('data-id');
+                    currentPool = $(this).attr('data-id');
                     localStorage.setItem('pool', currentPool);
                     loadPools(renderCallback);
                 });
