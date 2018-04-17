@@ -4,7 +4,6 @@ var defaultPool = 'rvn'; // Default Pool ID
 
 var storedPool = localStorage.getItem('pool');
 var currentPool = storedPool || defaultPool;
-//$('head link[rel=icon]').attr('href', 'assets/img/coins/' + currentPool + '.png');
 
 // private function
 function _formatter(value, decimal, unit) {
@@ -74,6 +73,7 @@ function loadPools(renderCallback) {
                     loadPools(renderCallback);
                 });
             }
+
             if (renderCallback.has()) {
                 renderCallback.fire();
             }
@@ -378,6 +378,9 @@ function loadPaymentsList(walletAddress) {
 }
 
 function loadConnectConfig() {
+    $('div[id*=Config').hide();
+    $('#' + currentPool + 'Config').show();
+
     return $.ajax(API + 'pools')
         .done(function (data) {
             var connectPoolConfig = '<tbody>';
