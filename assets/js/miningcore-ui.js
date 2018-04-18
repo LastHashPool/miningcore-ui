@@ -41,15 +41,10 @@ function _dateFormatter(date, format = true) {
 }
 
 function loadPools(renderCallback) {
-    $('#currentPool b').remove();
-    $('#poolList ul').remove();
+    $('#poolList ul').html('');
     return $.ajax(API + 'pools')
         .done(function (data) {
-            var poolList = '<ul class="dropdown-menu">';
-            if (data.pools.length > 1) {
-                $('#currentPool').attr('data-toggle', 'dropdown');
-                $('#currentPool').append('<b class="caret"></b>');
-            }
+            var poolList = '';
             $.each(data.pools, function (index, value) {
                 if (currentPool.length === 0 && index === 0) {
                     currentPool = value.id;
@@ -62,9 +57,8 @@ function loadPools(renderCallback) {
                     poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '"><img src="assets/img/coins/' + value.coin.type + '.png" style="margin-top: -4px; height: 20px;">&nbsp;<span class="big">' + value.coin.type + '</span></a></li>';
                 }
             });
-            poolList += '</ul>';
             if (poolList.length > 0) {
-                $('#poolList').append(poolList);
+                $('#poolList ul').append(poolList);
             }
             if (data.pools.length > 1) {
                 $('#poolList li a').on('click', function (event) {
@@ -120,7 +114,11 @@ function loadStatsChart() {
             networkHashRate = [];
             poolHashRate = [];
             $.each(data.stats, function (index, value) {
-                labels.push(_dateFormatter(value.created, false).format('HH:mm'));
+                if (labels.length === 0 || (labels.length + 1) % 4 === 1) {
+                    labels.push(_dateFormatter(value.created, false).format('HH:mm'));
+                } else {
+                    labels.push('');
+                }
 
                 networkHashRate.push(value.networkHashrate);
                 poolHashRate.push(value.poolHashrate);
@@ -217,7 +215,11 @@ function loadDashboardData(walletAddress) {
             var avgWorkersShares = [];
 
             $.each(data.performanceSamples, function (index, value) {
-                labels.push(_dateFormatter(value.created, false).format('HH:mm'));
+                if (labels.length === 0 || (labels.length + 1) % 4 === 1) {
+                    labels.push(_dateFormatter(value.created, false).format('HH:mm'));
+                } else {
+                    labels.push('');
+                }
 
                 var workerHashRate = 0;
                 $.each(value.workers, function (index2, value2) {
