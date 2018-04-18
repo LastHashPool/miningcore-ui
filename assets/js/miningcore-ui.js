@@ -389,7 +389,7 @@ function loadConnectConfig() {
             $.each(data.pools, function (index, value) {
                 if (currentPool === value.id) {
                     connectPoolConfig += '<tr><td>Algorithm</td><td>' + value.coin.algorithm + '</td></tr>';
-                    connectPoolConfig += '<tr><td>Payout Scheme</td><td>' + value.paymentProcessing.payoutScheme + '</td></tr>';
+                    // connectPoolConfig += '<tr><td>Payout Scheme</td><td>' + value.paymentProcessing.payoutScheme + '</td></tr>';
                     connectPoolConfig += '<tr><td>Minimum Payment</td><td>' + value.paymentProcessing.minimumPayment + '</td></tr>';
                     if (typeof(value.paymentProcessing.minimumPaymentToPaymentId) !== "undefined") {
                         connectPoolConfig += '<tr><td>Minimum Payment w/ #</td><td>' + value.paymentProcessing.minimumPaymentToPaymentId + '</td></tr>';
