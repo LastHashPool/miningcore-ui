@@ -87,17 +87,6 @@
                         <a class="navbar-brand" href="faq.html">FAQ</a>
                     </div>
                     <div class="collapse navbar-collapse">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="dropdown" id="poolList">
-                                <a id="currentPool" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <img src="" alt="" style="margin-top: -4px; height: 20px;" />&nbsp;
-                                    <span></span>
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                </ul>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </nav>
@@ -263,38 +252,8 @@
 <!--  Checkbox, Radio & Switch Plugins -->
 <script src="assets/js/bootstrap-checkbox-radio.js"></script>
 
-<!--  Charts Plugin -->
-<script src="assets/js/chartist.min.js"></script>
-
-<!--  Notifications Plugin    -->
-<script src="assets/js/bootstrap-notify.js"></script>
 
 <!-- Paper Dashboard Core javascript and methods -->
 <script src="assets/js/paper-dashboard.js"></script>
-
-<!--  momentjs Plugin -->
-<script src="assets/js/moment-with-locales.js"></script>
-
-<script src="assets/js/miningcore-ui.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        var renderCallback = $.Callbacks();
-        renderCallback.add(function () {
-            function render() {
-                setInterval(function load() {
-                    loadStatsData();
-                    return load;
-                }(), 60000);
-                setInterval(function load() {
-                    loadStatsChart();
-                    return load;
-                }(), 600000);
-            }
-
-            render();
-        });
-        loadPools(renderCallback);
-    });
-</script>
 
 </html>
