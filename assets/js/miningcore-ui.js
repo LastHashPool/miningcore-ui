@@ -405,9 +405,16 @@ function loadConnectConfig() {
                             connectPoolConfig += '<br />'
                         }
                         else {
-                            first = true;
+                            first = false;
                         }
-                        connectPoolConfig += port + ' &rarr; ';
+                        connectPoolConfig += port;
+
+                        if(options.name) {
+                            connectPoolConfig += ' (' + options.name + ')'
+                        }
+
+                        connectPoolConfig += ' &rarr; ';
+
                         if (typeof(options.varDiff) !== "undefined") {
                             connectPoolConfig += 'variable diff / ' + options.varDiff.minDiff + ' &harr; ';
                             if (typeof(options.varDiff.maxDiff) === "undefined") {
