@@ -92,6 +92,7 @@ function loadStatsData() {
                     $('#poolHashRate').text(_formatter(value.poolStats.poolHashrate, 5, 'H/s'));
                     $('#networkHashRate').text(_formatter(value.networkStats.networkHashrate, 5, 'H/s'));
                     $('#networkDifficulty').text(_formatter(value.networkStats.networkDifficulty, 5, ''));
+                    $('#networkBlock').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
                 }
             });
         })
