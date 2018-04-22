@@ -87,7 +87,7 @@ function loadStatsData() {
                     $('#networkDifficulty').text(_formatter(value.networkStats.networkDifficulty, 5, ''));
                     $('#networkBlockTime').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
                     $('#poolBlockTime').text(value.poolStats.lastPoolBlockTime ? moment.utc(value.poolStats.lastPoolBlockTime).fromNow() : 'n/a');
-                    $('#poolBlockEffort').text('~' + Math.round(value.currentBlockEffeort) + ' %');
+                    $('#poolBlockEffort').text('~' + Math.round(value.currentBlockEffeort) + '%');
                 }
             });
         })
