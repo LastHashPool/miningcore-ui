@@ -1,5 +1,9 @@
 // config
 var API = 'https://evocation.network:3000/api/'; // API address
+var POOLS = [
+    { 'id': 'rvn', 'name': 'Ravencoin', 'symbol': 'RVN' },
+    { 'id': 'pgn', 'name': 'Pigeoncoin', 'symbol': 'PGN' }
+]
 var defaultPool = 'rvn'; // Default Pool ID
 
 var storedPool = localStorage.getItem('pool');
@@ -42,45 +46,34 @@ function _dateFormatter(date, format = true) {
 
 function loadPools(renderCallback) {
     $('#poolList ul').html('');
-    return $.ajax(API + 'pools')
-        .done(function (data) {
-            var poolList = '';
-            $.each(data.pools, function (index, value) {
-                if (currentPool.length === 0 && index === 0) {
-                    currentPool = value.id;
-                }
-                if (currentPool === value.id) {
-                    $('#currentPool').attr('data-id', value.id);
-                    $('#currentPool span').text(value.coin.type);
-                    $('#currentPool img').attr('src', 'assets/img/coins/' + value.coin.type + '.png');
-                } else {
-                    poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '"><img src="assets/img/coins/' + value.coin.type + '.png" style="margin-top: -4px; height: 20px;">&nbsp;<span class="big">' + value.coin.type + '</span></a></li>';
-                }
-            });
-            if (poolList.length > 0) {
-                $('#poolList ul').append(poolList);
-            }
-            if (data.pools.length > 1) {
-                $('#poolList li a').on('click', function (event) {
-                    currentPool = $(this).attr('data-id');
-                    localStorage.setItem('pool', currentPool);
-                    loadPools(renderCallback);
-                });
-            }
+    var poolList = '';
 
-            if (renderCallback.has()) {
-                renderCallback.fire();
-            }
-        })
-        .fail(function () {
-            $.notify({
-                icon: "ti-cloud-down",
-                message: "Error: No response from API.<br>(loadPools)",
-            }, {
-                type: 'danger',
-                timer: 3000,
-            });
-        });
+    $.each(POOLS, function (index, value) {
+        if (currentPool.length === 0 && index === 0) {
+            currentPool = value.id;
+        }
+        if (currentPool === value.id) {
+            $('#currentPool').attr('data-id', value.id);
+            $('#currentPool span').text(value.name + ' (' + value.symbol + ')');
+            $('#currentPool img').attr('src', 'assets/img/coins/' + value.symbol + '.png');
+        } else {
+            poolList += '<li><a href="javascript:void(0)" data-id="' + value.id + '"><img src="assets/img/coins/' + value.symbol + '.png" style="margin-top: -4px; height: 20px;">&nbsp;<span class="big">' + value.name + ' (' + value.symbol + ')' + '</span></a></li>';
+        }
+    });
+
+    if (poolList.length > 0) {
+        $('#poolList ul').append(poolList);
+    }
+
+    $('#poolList li a').on('click', function (event) {
+        currentPool = $(this).attr('data-id');
+        localStorage.setItem('pool', currentPool);
+        loadPools(renderCallback);
+    });
+
+    if (renderCallback.has()) {
+        renderCallback.fire();
+    }
 }
 
 function loadStatsData() {
@@ -92,7 +85,9 @@ function loadStatsData() {
                     $('#poolHashRate').text(_formatter(value.poolStats.poolHashrate, 5, 'H/s'));
                     $('#networkHashRate').text(_formatter(value.networkStats.networkHashrate, 5, 'H/s'));
                     $('#networkDifficulty').text(_formatter(value.networkStats.networkDifficulty, 5, ''));
-                    $('#networkBlock').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
+                    $('#networkBlockTime').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
+                    $('#poolBlockTime').text(value.poolStats.lastPoolBlockTime ? moment.utc(value.poolStats.lastPoolBlockTime).fromNow() : 'n/a');
+                    $('#poolBlockEffort').text('~' + Math.round(value.currentBlockEffeort) + ' %');
                 }
             });
         })
@@ -315,16 +310,20 @@ function loadDashboardData(walletAddress) {
 }
 
 function loadBlocksList() {
+    $('#effortPlaceHolder').hide();
     return $.ajax(API + 'pools/' + currentPool + '/blocks?pageSize=100')
         .done(function (data) {
             var blockList = '<thead><tr><th>Date &amp; Time</th><th>Height</th><th>Effort</th><th>Status</th><th>Reward</th><th colspan="2">Confirmation</th></tr></thead><tbody>';
             if (data.length > 0) {
+                var accumulatedEffort = 0;
+                $('#effortPlaceHolder').show();
                 $.each(data, function (index, value) {
                     blockList += '<tr>';
                     blockList += '<td>' + _dateFormatter(value.created) + '</td>';
                     blockList += '<td>' + value.blockHeight + '</td>';
                     if (typeof(value.effort) !== "undefined") {
                         blockList += '<td>~' + Math.round(value.effort * 100) + '%</td>';
+                        accumulatedEffort += value.effort;
                     } else {
                         blockList += '<td>n/a</td>';
                     }
@@ -334,6 +333,8 @@ function loadBlocksList() {
                     blockList += '<td colspan="3"><a href="' + value.infoLink + '" target="_blank">' + value.transactionConfirmationData.substring(0, 16) + ' &hellip; ' + value.transactionConfirmationData.substring(value.transactionConfirmationData.length - 16) + ' </a></td>';
                     blockList += '</tr>'
                 });
+
+                $('#effort').text(Math.round(((accumulatedEffort / data.length) * 100)));
             } else {
                 blockList += '<tr><td colspan="8">None</td></tr>';
             }
