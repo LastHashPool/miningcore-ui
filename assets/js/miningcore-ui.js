@@ -38,7 +38,7 @@ function _dateFormatter(date, format = true) {
     var date = moment.utc(date).local();
 
     if(format) {
-        date = date.format('MMMM Do YYYY, hh:mm:ss');
+        date = date.format('MMMM Do YYYY, HH:mm:ss');
     }
 
     return date;
