@@ -5,7 +5,7 @@
         <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
         <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-        <meta name="description" content="Welcome to Evocation network! Your new home for Ravencoin,Pigeoncoin mining with low fees (0.1%), PPLNS payout schema and reliable servers." />
+        <meta name="description" content="Welcome to Evocation network! Your new home for Ravencoin,Pigeoncoin mining with low fees (0.1%), low latency, PPLNS payout schema and reliable servers." />
         <meta name="keywords" content="raven, ravencoin, pigeon, pigeoncoin, rvn, pgn, mining, pool, pplns, block, payments, payouts, reward, hash, hashrate">
 
         <title>Evocation network - Ravencoin and Pigeoncoin mining pool</title>
@@ -67,6 +67,12 @@
                                 <p>FAQ</p>
                             </a>
                         </li>
+                        <li>
+                            <a href="https://discord.gg/QTdBndJ" title="Come join us at our discord server" target="_blank">
+                                <img src="assets/img/discord.png" width="35px" style="margin-left:-3px;margin-top:-2px;">
+                                <span style="margin-left:10px;line-height:30px;font-size:12px;font-weight:600;text-transform:uppercase;">Discord</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -82,10 +88,6 @@
                                 <span class="icon-bar bar3"></span>
                             </button>
                             <a class="navbar-brand" href="index.html">Stats</a>
-                            <div class="alert alert-warning">
-                                <strong>Attention!</strong> Please read the <a href="faq.html">FAQ </a> section to understand how the payment system works.
-                            </div>
-                            <p>&nbsp;</p>
                         </div>
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav navbar-right">
@@ -103,6 +105,9 @@
                     </div>
                 </nav>
                 <div class="content">
+                    <div class="alert alert-warning">
+                        <strong>Attention!</strong> Please read the <a href="faq.html">FAQ </a> section to understand how the payment system works.
+                    </div>
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-sm-6">
@@ -141,15 +146,15 @@
                                             </div>
                                             <div class="col-xs-10">
                                                 <div class="numbers">
-                                                    <p>Network's Hash Rate</p>
-                                                    <div id="networkHashRate"></div>
+                                                    <p>Pools's Average(24h) Hash Rate</p>
+                                                    <div id="poolsAvgHashrate"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="footer">
                                             <hr/>
                                             <div class="stats">
-                                                <i class="ti-reload"></i> Update every minute
+                                                <i class="ti-reload"></i> Update every hour
                                             </div>
                                         </div>
                                     </div>
@@ -166,7 +171,7 @@
                                             </div>
                                             <div class="col-xs-10">
                                                 <div class="numbers">
-                                                    <p>Pool's Hash Rate</p>
+                                                    <p>Pool's Current Hash Rate</p>
                                                     <div id="poolHashRate"></div>
                                                 </div>
                                             </div>
@@ -350,10 +355,6 @@
                         <div class="copyright pull-left">
                             <span>
                                 <a href="mailto:support@evocation.network">support@evocation.network</a>
-                            </span>
-                            |
-                            <span>
-                                <a href="https://discord.gg/QTdBndJ" target="_blank">Discord</a>
                             </span>
                         </div>
                         <div class="copyright pull-right">

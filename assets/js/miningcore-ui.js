@@ -83,7 +83,6 @@ function loadStatsData() {
                 if (currentPool === value.id) {
                     $('#poolMiners').text(_formatter(value.poolStats.connectedMiners, 0, ''));
                     $('#poolHashRate').text(_formatter(value.poolStats.poolHashrate, 5, 'H/s'));
-                    $('#networkHashRate').text(_formatter(value.networkStats.networkHashrate, 5, 'H/s'));
                     $('#networkDifficulty').text(_formatter(value.networkStats.networkDifficulty, 5, ''));
                     $('#networkBlockTime').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
                     $('#poolBlockTime').text(value.poolStats.lastPoolBlockTime ? moment.utc(value.poolStats.lastPoolBlockTime).fromNow() : 'n/a');
@@ -109,6 +108,7 @@ function loadStatsChart() {
             connectedMiners = [];
             networkHashRate = [];
             poolHashRate = [];
+            totalPoolHashRate = 0;
             $.each(data.stats, function (index, value) {
                 if (labels.length === 0 || (labels.length + 1) % 4 === 1) {
                     labels.push(_dateFormatter(value.created, false).format('HH:mm'));
@@ -119,6 +119,7 @@ function loadStatsChart() {
                 networkHashRate.push(value.networkHashrate);
                 poolHashRate.push(value.poolHashrate);
                 connectedMiners.push(value.connectedMiners);
+                totalPoolHashRate += value.poolHashrate;
             });
             var data = {
                 labels: labels,
@@ -178,6 +179,8 @@ function loadStatsChart() {
                 }],
             ];
             Chartist.Line('#chartStatsMiners', data, options, responsiveOptions);
+
+            $('#poolsAvgHashrate').text(_formatter(totalPoolHashRate / data.labels.length, 5, 'H/s'));
         })
         .fail(function () {
             $.notify({
