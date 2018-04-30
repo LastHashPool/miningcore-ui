@@ -2,7 +2,8 @@
 var API = 'https://evocation.network:3000/api/'; // API address
 var POOLS = [
     { 'id': 'rvn', 'name': 'Ravencoin', 'symbol': 'RVN' },
-    { 'id': 'pgn', 'name': 'Pigeoncoin', 'symbol': 'PGN' }
+    { 'id': 'pgn', 'name': 'Pigeoncoin', 'symbol': 'PGN' },
+    { 'id': 'dgb-scrypt', 'name': 'DigiByte(Scrypt)', 'symbol': 'DGB' }
 ]
 var defaultPool = 'rvn'; // Default Pool ID
 
@@ -77,18 +78,14 @@ function loadPools(renderCallback) {
 }
 
 function loadStatsData() {
-    return $.ajax(API + 'pools')
+    return $.ajax(API + 'pools/' + currentPool)
         .done(function (data) {
-            $.each(data.pools, function (index, value) {
-                if (currentPool === value.id) {
-                    $('#poolMiners').text(_formatter(value.poolStats.connectedMiners, 0, ''));
-                    $('#poolHashRate').text(_formatter(value.poolStats.poolHashrate, 5, 'H/s'));
-                    $('#networkDifficulty').text(_formatter(value.networkStats.networkDifficulty, 5, ''));
-                    $('#networkBlockTime').text(moment.utc(value.networkStats.lastNetworkBlockTime).fromNow());
-                    $('#poolBlockTime').text(value.poolStats.lastPoolBlockTime ? moment.utc(value.poolStats.lastPoolBlockTime).fromNow() : 'n/a');
-                    $('#poolBlockEffort').text('~' + Math.round(value.currentBlockEffeort) + '%');
-                }
-            });
+            $('#poolMiners').text(_formatter(data.pool.poolStats.connectedMiners, 0, ''));
+            $('#poolHashRate').text(_formatter(data.pool.poolStats.poolHashrate, 5, 'H/s'));
+            $('#networkDifficulty').text(_formatter(data.pool.networkStats.networkDifficulty, 5, ''));
+            $('#networkBlockTime').text(moment.utc(data.pool.networkStats.lastNetworkBlockTime).fromNow());
+            $('#poolBlockTime').text(data.pool.poolStats.lastPoolBlockTime ? moment.utc(data.pool.poolStats.lastPoolBlockTime).fromNow() : 'n/a');
+            $('#poolBlockEffort').text('~' + Math.round(data.pool.currentBlockEffeort) + '%');
         })
         .fail(function () {
             $.notify({
