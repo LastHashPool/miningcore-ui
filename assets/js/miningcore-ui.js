@@ -313,7 +313,7 @@ function loadBlocksList() {
     $('#effortPlaceHolder').hide();
     return $.ajax(API + 'pools/' + currentPool + '/blocks?pageSize=100')
         .done(function (data) {
-            var blockList = '<thead><tr><th>Date &amp; Time</th><th>Height</th><th>Effort</th><th>Status</th><th>Reward</th><th colspan="2">Confirmation</th></tr></thead><tbody>';
+            var blockList = '<thead><tr><th>Date &amp; Time</th><th>Height</th><th>Effort</th><th>Status</th><th>Reward</th><th>Finder</th><th colspan="2">Confirmation</th></tr></thead><tbody>';
             if (data.length > 0) {
                 var accumulatedEffort = 0;
                 $('#effortPlaceHolder').show();
@@ -329,6 +329,7 @@ function loadBlocksList() {
                     }
                     blockList += '<td>' + value.status + '</td>';
                     blockList += '<td>' + _formatter(value.reward, 5, '') + '</td>';
+                    blockList += '<td>' + value.miner + '</td>';
                     blockList += '<td>~' + Math.round(value.confirmationProgress * 100) + '%</td>';
                     blockList += '<td colspan="3"><a href="' + value.infoLink + '" target="_blank">' + value.transactionConfirmationData.substring(0, 16) + ' &hellip; ' + value.transactionConfirmationData.substring(value.transactionConfirmationData.length - 16) + ' </a></td>';
                     blockList += '</tr>'
