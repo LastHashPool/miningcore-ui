@@ -1,7 +1,5 @@
 # miningcore-ui
-UI designed for [Miningcore](https://github.com/coinfoundry/miningcore)
-
-Note: Config files are ONLY for LastHash Pool!
+UI designed for [Miningcore](https://github.com/coinfoundry/miningcore) for LastHash Pool
 
 ## Setup
 
